@@ -139,6 +139,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
-		
+		SmartDashboard.putNumber("motor1Tset", SmartDashboard.getNumber("motor1",-5));
+		SmartDashboard.putNumber("motor2Tset", SmartDashboard.getNumber("motor2",-5));
+		SmartDashboard.putBoolean("digitalInputTest", SmartDashboard.getBoolean("digitalInput",false));
 	}
 }
