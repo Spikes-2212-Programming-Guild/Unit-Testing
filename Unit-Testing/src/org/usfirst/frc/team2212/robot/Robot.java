@@ -1,15 +1,23 @@
 
 package org.usfirst.frc.team2212.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import java.util.function.Supplier;
+
 import org.usfirst.frc.team2212.robot.commands.ExampleCommand;
 import org.usfirst.frc.team2212.robot.subsystems.ExampleSubsystem;
+
+import com.spikes2212.dashboard.ConstantHandler;
+import com.spikes2212.utils.RunnableCommand;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,6 +30,16 @@ public class Robot extends IterativeRobot {
 
 	public static final ExampleSubsystem exampleSubsystem = new ExampleSubsystem();
 	public static OI oi;
+	private Supplier<Integer> motor1Port = ConstantHandler.addConstantInt("motor1Port", 8);
+	private Supplier<Integer> motor2Port = ConstantHandler.addConstantInt("motor2Port", 9);
+	private Supplier<Integer> digitalInputPort = ConstantHandler.addConstantInt("digitalInput", 0);
+	private Supplier<Double> motor1Speed = ConstantHandler.addConstantDouble("motor1Speed", 0.5);
+	private Supplier<Double> motor2Speed = ConstantHandler.addConstantDouble("motor2Speed", 0.5);
+	public Talon motor1 = new Talon(motor1Port.get());
+	public Talon motor2 = new Talon(motor2Port.get());
+	public DigitalInput digitalInput = new DigitalInput(digitalInputPort.get());
+	
+	
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -36,6 +54,15 @@ public class Robot extends IterativeRobot {
 		chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", chooser);
+		LiveWindow.addActuator("motor1", motor1Port.get(), motor1);
+		LiveWindow.addActuator("motor2", motor2Port.get(), motor2);
+		LiveWindow.addSensor("digitalInput", digitalInputPort.get(), digitalInput);
+		SmartDashboard.putData("moveMotor1", new RunnableCommand(()->{
+			motor1.set(motor1Speed.get());
+		}));
+		SmartDashboard.putData("moveMotor2", new RunnableCommand(()->{
+			motor2.set(motor2Speed.get());
+		}));
 	}
 
 	/**
@@ -112,5 +139,6 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
+		
 	}
 }
